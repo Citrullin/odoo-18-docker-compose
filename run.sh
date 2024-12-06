@@ -26,6 +26,12 @@ else
   sudo sysctl -p
 fi
 
+if [ "$ODOO_INIT" = true ]; then
+  ODOO_INIT_CMD="odoo --database=$POSTGRES_DB  --db_user=$POSTGRES_USER --db_password=$POSTGRES_PASSWORD  --db_host=db --db_port=5432 -i INIT"
+else
+  ODOO_INIT_CMD="echo 'Odoo is running without initialization.'"
+fi
+
 # Set ports in docker-compose.yml
 # Update docker-compose configuration
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -35,6 +41,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   sed -i '' 's/$POSTGRES_USER/'$POSTGRES_USER'/g' $ODOO_GIT_DEST/docker-compose.yml
   sed -i '' 's/$POSTGRES_PASSWORD/'$POSTGRES_PASSWORD'/g' $ODOO_GIT_DEST/docker-compose.yml
   sed -i '' 's/$POSTGRES_DB/'$POSTGRES_DB'/g' $ODOO_GIT_DEST/docker-compose.yml
+  sed -i '' 's/$ODOO_INIT_CMD/'$ODOO_INIT_CMD'/g' $ODOO_GIT_DEST/docker-compose.yml
 else
   # Linux sed syntax
   sed -i 's/$ODOO_PORT/'$ODOO_PORT'/g' $ODOO_GIT_DEST/docker-compose.yml
@@ -42,6 +49,9 @@ else
   sed -i 's/$POSTGRES_USER/'$POSTGRES_USER'/g' $ODOO_GIT_DEST/docker-compose.yml
   sed -i 's/$POSTGRES_PASSWORD/'$POSTGRES_PASSWORD'/g' $ODOO_GIT_DEST/docker-compose.yml
   sed -i 's/$POSTGRES_DB/'$POSTGRES_DB'/g' $ODOO_GIT_DEST/docker-compose.yml
+  sed -i 's/$ODOO_INIT_CMD/'$ODOO_INIT_CMD'/g' $ODOO_GIT_DEST/docker-compose.yml
+
+  
 fi
 
 # Set file and directory permissions after installation
